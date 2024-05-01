@@ -26,6 +26,9 @@
             <li class="nav-item">
               <a class="nav-link {{ Request::is('account*') ? 'active' : '' }}" href="{{ route('account.index') }}">Account</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link {{ Request::is('category*') ? 'active' : '' }}" href="{{ route('category.index') }}">Category</a>
+            </li>
             <!-- <li class="nav-item">
               <a class="nav-link disabled" aria-disabled="true">Disabled</a>
             </li> -->

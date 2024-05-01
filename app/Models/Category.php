@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Account extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class Account extends Model
       'user_id',
       'name',
     ];
-
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

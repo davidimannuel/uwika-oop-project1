@@ -12,7 +12,7 @@
   <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">account list</h3>
+            <h3 class="card-title">category list</h3>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
@@ -90,7 +90,7 @@
     var datatableList = $('#table-list').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('account.index') }}',
+      ajax: '{{ route('category.index') }}',
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
         { data: 'name', name: 'name' },
@@ -118,7 +118,7 @@
               });
   
               var id = $(this).data('id');
-              var ajaxUrl = '{{ route("account.destroy", ":id") }}';
+              var ajaxUrl = '{{ route("category.destroy", ":id") }}';
               ajaxUrl = ajaxUrl.replace(':id', id);
               $.ajax({
                   url: ajaxUrl,
@@ -166,7 +166,7 @@
           });
   
           var id = $(this).data('id');
-          var ajaxUrl = '{{ route("account.edit", ":id") }}';
+          var ajaxUrl = '{{ route("category.edit", ":id") }}';
           ajaxUrl = ajaxUrl.replace(':id', id);
           $.ajax({
               url: ajaxUrl,
@@ -219,11 +219,11 @@
       formData.append('name', $('#name').val());
   
       var editId = parseInt($("#modal-save-button").attr('data-edit-id'));
-      var url = '{{ route('account.store') }}';
+      var url = '{{ route('category.store') }}';
       
       if (editId > 0) {
         formData.append('_method', 'PUT'); // used for method except GET and POST
-        url = '{{ route("account.update", ":id") }}';
+        url = '{{ route("category.update", ":id") }}';
         url = url.replace(':id', editId);
       }
   

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
-class AccountController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class AccountController extends Controller
     {
       if (request()->ajax())
       {
-        $model = Account::where('user_id', auth()->user()->id);
+        $model = Category::where('user_id', auth()->user()->id);
         return DataTables::of($model)
         ->order(function ($query) {
           if (!request()->has('updated_at')) {
@@ -42,7 +42,7 @@ class AccountController extends Controller
         ->rawColumns(['poster','action']) // render as raw html instead of string
         ->toJson();
       }
-      return view('account.index');
+      return view('Category.index');
     }
 
     /**
@@ -65,7 +65,7 @@ class AccountController extends Controller
           return response()->json(['errors'=>$validate->errors()->all()]);
       }
 
-      Account::create([
+      Category::create([
         "user_id" => auth()->user()->id, // get user id from auth user
         "name" => $request->input('name'),
       ]);
@@ -78,7 +78,7 @@ class AccountController extends Controller
      */
     public function show(string $id)
     {
-      $data = Account::find($id);
+      $data = Category::find($id);
       return view("admin.facility-type.show",[
         "data" => $data
       ]);
@@ -89,7 +89,7 @@ class AccountController extends Controller
      */
     public function edit(string $id)
     {
-      $data = Account::find($id);
+      $data = Category::find($id);
       if (request()->ajax()) { // used when request using ajax
         return response()->json([
             'data' => $data,
@@ -111,7 +111,7 @@ class AccountController extends Controller
           return response()->json(['errors'=>$validate->errors()->all()]);
       }
 
-      $data = Account::find($id);
+      $data = Category::find($id);
       $data->name = $request->input('name');
       $data->save();
     }
@@ -121,6 +121,6 @@ class AccountController extends Controller
      */
     public function destroy(string $id)
     {
-      Account::destroy($id);
+      Category::destroy($id);
     }
 }
