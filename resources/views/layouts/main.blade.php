@@ -29,9 +29,9 @@
             <li class="nav-item">
               <a class="nav-link {{ Request::is('category*') ? 'active' : '' }}" href="{{ route('category.index') }}">Category</a>
             </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-            </li> -->
+            <li class="nav-item">
+              <a class="nav-link {{ Request::is('transaction*') ? 'active' : '' }}" href="{{ route('transaction.index') }}">Transaction</a>
+            </li>
             @endauth
           </ul>
           <ul class="navbar-nav ms-auto">

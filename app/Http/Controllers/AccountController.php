@@ -45,6 +45,19 @@ class AccountController extends Controller
       return view('account.index');
     }
 
+    public function listAccount()
+    {
+      if (request()->ajax()) {
+          $data = Account::where('user_id', auth()->user()->id)
+            ->where('name','ILIKE',"%".request('search')."%")->get();
+          return response()->json([
+            'data' => $data,
+            'request' => request('search'),
+          ]);
+      }
+        
+      return;
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -78,10 +91,7 @@ class AccountController extends Controller
      */
     public function show(string $id)
     {
-      $data = Account::find($id);
-      return view("admin.facility-type.show",[
-        "data" => $data
-      ]);
+     
     }
 
     /**
