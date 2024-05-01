@@ -27,7 +27,6 @@ class RegisterController extends Controller
       
       $user = User::create($validated_input);
 
-      // Auth::login($user);
       $request->session()->flash('register_success', 'Registration successful');
 
       return redirect()->route('login');

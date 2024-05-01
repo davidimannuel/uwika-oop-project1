@@ -23,7 +23,7 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/">About</a>
+              <a class="nav-link" href="{{ route('account.index') }}">Account</a>
             </li>
             <!-- <li class="nav-item">
               <a class="nav-link disabled" aria-disabled="true">Disabled</a>
