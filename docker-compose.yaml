@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - TZ=Asia/Jakarta
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=s3cret
+      - POSTGRES_DB=oop_project1_db
+    ports:
+      - '5432:5432'
+    volumes: 
+      - postgre:/var/lib/postgresql/data
+
+# create the directory first if you want to use this
+volumes:
+  postgre:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./docker_volumes/postgre
