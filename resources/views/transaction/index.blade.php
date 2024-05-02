@@ -31,6 +31,18 @@
                   Create
                 </button>
               </div>
+              <div class="col-md-3">
+                <p class="text-end">Income : </p>
+                <p id="total_income" class="text-end fs-5">0</p>
+              </div>
+              <div class="col-md-3">
+                <p class="text-end">Expense : </p>
+                <p id="total_expense" class="text-end fs-5">0</p>
+              </div>
+              <div class="col-md-3">
+                <p class="text-end">Balance : </p>
+                <p id="balance" class="text-end fs-5">0</p>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-12 table-responsive">
@@ -38,9 +50,9 @@
                   <thead>
                     <tr>
                       <th class="text-center">No</th>
+                      <th class="text-center">Transaction At</th>
                       <th class="text-center">Remark</th>
                       <th class="text-center">Category</th>
-                      <th class="text-center">Transaction At</th>
                       <th class="text-center">Type</th>
                       <th class="text-center">Amount</th>
                       <th class="text-center">Created At</th>
@@ -188,9 +200,10 @@
       ajax: '{{ route('transaction.index') }}'+'?account='+$('#account').val(),
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
-        { data: 'remark', name: 'remark' },
-        { data: 'category.name', searchable: false, orderable: false},
         { data: 'transaction_at', name: 'transaction_at'},
+        { data: 'remark', name: 'remark' },
+        // { data: 'category.name', searchable: false, orderable: false},
+        { data: 'category_style', searchable: false, orderable: false},
         { data: 'transaction_type', searchable: false, orderable: false},
         { data: 'amount', searchable: false, orderable: false},
         { data: 'created_at', name: 'created_at'},
@@ -310,6 +323,38 @@
       }
     });
   
+    // function for load total income, expense, and balance
+    function loadTotal() {
+      $.ajax({
+        url: '{{ route('transaction.total') }}'+'?account_id='+$('#account').val(),
+        type: 'GET',
+        success: function(response) {
+            // Handle success response
+            if (response.errors) {
+              Swal.fire({
+                  title: "Oops...",
+                  text: "error",
+                  html: response.errors,
+                  icon: "error",
+              });
+            } else {
+              $('#total_income').html(response.data.total_income_formated);
+              $('#total_expense').html(response.data.total_expense_formated);
+              $('#balance').html(response.data.balance_formated);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText);
+            Swal.fire({
+                title: "Oops...",
+                text: "Something went wrong!",
+                icon: "error",
+            });
+        }
+      });
+    }
+
     //add event listener for elemen <select>
     $('#account').on('change', function() {
         // get value
@@ -318,12 +363,27 @@
         var ajaxUrl = '{{ route('transaction.index') }}' +'?account_id='+$('#account').val();
 
         datatableList.ajax.url(ajaxUrl).load();
+        loadTotal();
     });
     // modal
     $("#modal-show-button").click(function(){
+      // if not select account yet give warning
+      if ($('#account').val() == null) {
+        Swal.fire({
+          title: "Oops...",
+          text: "Please select account first!",
+          icon: "warning",
+        });
+        return;
+      }
       $("#modal-title").html('create');
       $("#modal-form").modal('show');
       $('#remark').val('');
+      $('#account').val('');
+      $('#category').val('');
+      $('#transaction-at').val('');
+      $('#transaction-type').val('');
+      $('#amount').val('');
       $("#modal-save-button").attr('data-edit-id','')
     })
     

@@ -28,10 +28,14 @@ class TransactionController extends Controller
         })
         ->addIndexColumn()
         ->addColumn('transaction_type',function($data){
-          return $data->debit > 0 ? 'income' : 'expense';
+          $type = $data->debit > 0 ? 'income' : 'expense';
+          $bgColor = $type == 'income' ? 'success' : 'danger';
+          return '<span class="badge bg-'.$bgColor.'">'.$type.'</span>';
         })
         ->addColumn('amount',function($data){
-          return $data->debit > 0 ? $data->debit : $data->credit;
+          $amount = $data->debit > 0 ? $data->debit : $data->credit;
+          // format amount to currency
+          return number_format($amount, 0, ',', '.');
         })
         ->addColumn('action',function($data){
           return '
@@ -50,11 +54,37 @@ class TransactionController extends Controller
           $carbonTime = Carbon::parse($data->updated_at, 'Asia/Jakarta');
           return $carbonTime->format('Y-m-d H:i:s');
         })
+        ->addColumn('category_style',function($data){
+          $html = "";
+          // Use a ternary operation to determine the status based on the conditions
+          $bgColor = ($data->id % 4 == 0) ? 'success' : (($data->id % 3 == 0) ? 'info' : (($data->id % 2 == 0) ? 'dark' : 'primary'));
+          $html = $html . '<span class="badge bg-'.$bgColor.'">'.$data->category->name.'</span>';
+          return $html;
+        })
         ->setRowClass('text-center')
-        ->rawColumns(['poster','action']) // render as raw html instead of string
+        ->rawColumns(['poster','action','transaction_type','category_style']) // render as raw html instead of string
         ->toJson();
       }
       return view('transaction.index');
+    }
+
+    public function total()
+    {
+      $account_id = request("account_id");
+      $total_income = Transaction::where('account_id', $account_id)->where('debit', '>', 0)->sum('debit');
+      $total_expense = Transaction::where('account_id', $account_id)->where('credit', '>', 0)->sum('credit');
+      $balance = $total_income - $total_expense;
+      return response()->json([
+        "data" => [
+          "total_income" => $total_income,
+          "total_expense" => $total_expense,
+          "balance" => $balance,
+          // format total expense and income to currency
+          "total_income_formated" => number_format($total_income, 0, ',', '.'),
+          "total_expense_formated" => number_format($total_expense, 0, ',', '.'),
+          "balance_formated" => number_format($balance, 0, ',', '.'),
+        ]
+      ]);
     }
 
     /**

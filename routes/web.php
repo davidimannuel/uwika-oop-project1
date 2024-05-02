@@ -31,4 +31,5 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/list-category', [CategoryController::class, 'listCategory'])->name('category.list');
   // transaction
   Route::resource('transaction', TransactionController::class);
+  Route::get('/transaction-total', [TransactionController::class, 'total'])->name('transaction.total');
 });
