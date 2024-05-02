@@ -202,7 +202,6 @@
         { data: 'DT_RowIndex',searchable: false, orderable: false},
         { data: 'transaction_at', name: 'transaction_at'},
         { data: 'remark', name: 'remark' },
-        // { data: 'category.name', searchable: false, orderable: false},
         { data: 'category_style', searchable: false, orderable: false},
         { data: 'transaction_type', searchable: false, orderable: false},
         { data: 'amount', searchable: false, orderable: false},
@@ -254,6 +253,7 @@
                         });
   
                         datatableList.ajax.reload(); // reload datatable
+                        loadTotal();
                       }
                   },
                   error: function(xhr, status, error) {
@@ -379,7 +379,6 @@
       $("#modal-title").html('create');
       $("#modal-form").modal('show');
       $('#remark').val('');
-      $('#account').val('');
       $('#category').val('');
       $('#transaction-at').val('');
       $('#transaction-type').val('');
@@ -439,6 +438,7 @@
                     icon: "success",
                 });
                 datatableList.ajax.reload(); // reload datatable
+                loadTotal();
                 $("#modal-form").modal('hide'); // close modal
               }
           },
