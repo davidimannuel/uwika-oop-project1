@@ -42,7 +42,7 @@ class CategoryController extends Controller
         ->rawColumns(['poster','action']) // render as raw html instead of string
         ->toJson();
       }
-      return view('Category.index');
+      return view('category.index');
     }
 
     public function listCategory()
