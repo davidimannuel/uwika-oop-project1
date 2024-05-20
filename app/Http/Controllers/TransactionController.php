@@ -241,7 +241,7 @@ class TransactionController extends Controller
       $headers = array(
         'Content-Type' => 'text/csv',
       );
-      return response()->download($filename, 'transaction.csv', $headers);
+      return response()->download($filename, 'transaction.csv', $headers)->deleteFileAfterSend(true);
     }
 
     /**
