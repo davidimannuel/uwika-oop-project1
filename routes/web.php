@@ -39,4 +39,5 @@ Route::middleware(['auth'])->group(function () {
   // transaction
   Route::resource('transaction', TransactionController::class);
   Route::get('/transaction-total', [TransactionController::class, 'total'])->name('transaction.total');
+  Route::get('/transaction-csv', [TransactionController::class, 'export_csv'])->name('transaction.exportCsv');
 });

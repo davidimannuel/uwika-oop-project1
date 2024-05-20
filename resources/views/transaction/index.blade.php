@@ -11,9 +11,27 @@
 
 @section('content')
 <div class="row mb-2">
-  <div class="col-md-3 mr-auto">
+  <div class="col-md-2">
     <select class="form-control" name="account" id="account">
     </select>
+  </div>
+  <div class="col-md-1">
+    <p class="text-center">date : </p>
+  </div>
+  <div class="col-md-2">
+    <input type="date" class="form-control" name="start-date" id="start-date">
+  </div>
+  <div class="col-md-1">
+    <p class="text-center">to</p>
+  </div>
+  <div class="col-md-2">
+    <input type="date" class="form-control" name="end-date" id="end-date">
+  </div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-primary" id="filter-button">filter</button>
+  </div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-success" id="export-csv-button">Export CSV</button>
   </div>
 </div>
 <div class="row">
@@ -326,7 +344,7 @@
     // function for load total income, expense, and balance
     function loadTotal() {
       $.ajax({
-        url: '{{ route('transaction.total') }}'+'?account_id='+$('#account').val(),
+        url: '{{ route('transaction.total') }}'+'?account_id='+$('#account').val()+ '&start_date='+$('#start-date').val()+'&end_date='+$('#end-date').val(),
         type: 'GET',
         success: function(response) {
             // Handle success response
@@ -365,6 +383,53 @@
         datatableList.ajax.url(ajaxUrl).load();
         loadTotal();
     });
+
+    // add event listener for filter button
+    $('#filter-button').click(function(event){
+      // prevent default form submit
+      event.preventDefault();
+      // if not select account yet give warning
+      if ($('#account').val() == null) {
+        Swal.fire({
+          title: "Oops...",
+          text: "Please select account first!",
+          icon: "warning",
+        });
+        return;
+      }
+      // configure URL Ajax and adding query parameter "type"
+      var ajaxUrl = '{{ route('transaction.index') }}' +'?account_id='+$('#account').val()+'&start_date='+$('#start-date').val()+'&end_date='+$('#end-date').val();
+      datatableList.ajax.url(ajaxUrl).load();
+      loadTotal();
+    })
+
+    // add event listener for export csv button
+    $('#export-csv-button').click(function(event){
+      // prevent default form submit
+      event.preventDefault();
+      // if not select account yet give warning
+      if ($('#account').val() == null) {
+        Swal.fire({
+          title: "Oops...",
+          text: "Please select account first!",
+          icon: "warning",
+        });
+        return;
+      }
+      // validate start date and end date
+      if ($('#start-date').val() == '' || $('#end-date').val() == '') {
+        Swal.fire({
+          title: "Oops...",
+          text: "Please select start date and end date!",
+          icon: "warning",
+        });
+        return;
+      }
+      // configure URL Ajax and adding query parameter "type"
+      var ajaxUrl = '{{ route('transaction.exportCsv') }}' +'?account_id='+$('#account').val()+'&start_date='+$('#start-date').val()+'&end_date='+$('#end-date').val();
+      window.location.href = ajaxUrl;
+    })
+
     // modal
     $("#modal-show-button").click(function(){
       // if not select account yet give warning

@@ -174,7 +174,6 @@ class DashboardController extends Controller
       foreach ($expense as $item) {
         $expense_data[$item->month]['total'] = $item->total;
       }
-   
 
       return response()->json(array(
           'year' => date('Y'),
