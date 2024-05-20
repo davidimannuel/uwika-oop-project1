@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard.index');
+    }
     return view('home');
 })->name('home');
 
@@ -23,6 +26,10 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 
 // protected by auth middleware
 Route::middleware(['auth'])->group(function () {
+  // Dashboard
+  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+  Route::get('/dashboard/incomes-this-year-group-by-month', [DashboardController::class, 'incomes_this_year_group_by_month'])->name('dashboard.incomesThisYearGroupByMonth');
+  Route::get('/dashboard/expenses-this-year-group-by-month', [DashboardController::class, 'expenses_this_year_group_by_month'])->name('dashboard.expensesThisYearGroupByMonth');
   // account
   Route::resource('account', AccountController::class);
   Route::get('/list-account', [AccountController::class, 'listAccount'])->name('account.list');
