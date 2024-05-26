@@ -5,18 +5,28 @@
   <div class="col-md-6">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Total incomes this Year</h5>
-        {{-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> --}}
-        <canvas id="total-incomes-this-year"></canvas>
+        <h5 class="card-title">Total income and expense all time</h5>
+        <canvas id="total-incomes-and-expenses-all-time"></canvas>
       </div>
     </div>
   </div>
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Total expenses this Year</h5>
-        {{-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> --}}
-        <canvas id="total-expenses-this-year"></canvas>
+    <div class="row">
+      <div class="card col-md-12">
+        <div class="card-body">
+          <h5 class="card-title">Total incomes this Year</h5>
+          {{-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> --}}
+          <canvas id="total-incomes-this-year"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card col-md-12">
+        <div class="card-body">
+          <h5 class="card-title">Total expenses this Year</h5>
+          {{-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> --}}
+          <canvas id="total-expenses-this-year"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -80,6 +90,39 @@ $(document).ready(function() {
           datasets: [{
             label: chart_label,
             data: total_expenses_this_year_data,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  });
+  
+  $.ajax({
+    url: "{{ route('dashboard.totalIncomesAndExpensesAllTime') }}",
+    type: 'GET',
+    success: function(response) {
+      var ctx = document.getElementById('total-incomes-and-expenses-all-time').getContext('2d');
+      var chart_labels = [];
+      var chart_data = [];
+      response.data.forEach(element => {
+        chart_labels.push(element.name);
+        chart_data.push(element.total);
+      });
+
+      var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: chart_labels,
+          datasets: [{
+            label: 'Total Incomes and Expenses All Time',
+            data: chart_data,
             borderWidth: 1
           }]
         },

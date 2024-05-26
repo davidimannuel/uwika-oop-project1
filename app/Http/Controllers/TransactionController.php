@@ -233,9 +233,9 @@ class TransactionController extends Controller
       $data = $model->orderBy('transaction_at')->get();
       $filename = 'transaction_'.time().'.csv';
       $handle = fopen($filename, 'w+');
-      fputcsv($handle, array('ID', 'Remark', 'Category',  'Debit', 'Credit', 'Transaction At'));
+      fputcsv($handle, array('Transaction At', 'Remark', 'Category',  'Debit', 'Credit'));
       foreach($data as $row) {
-        fputcsv($handle, array($row['id'], $row['remark'], $row['category']['name'], $row['debit'], $row['credit'] , $row['transaction_at']));
+        fputcsv($handle, array($row['transaction_at'], $row['remark'], $row['category']['name'], $row['debit'], $row['credit']));
       }
       fclose($handle);
       $headers = array(

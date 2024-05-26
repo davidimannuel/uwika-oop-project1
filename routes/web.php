@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
   Route::get('/dashboard/incomes-this-year-group-by-month', [DashboardController::class, 'incomes_this_year_group_by_month'])->name('dashboard.incomesThisYearGroupByMonth');
   Route::get('/dashboard/expenses-this-year-group-by-month', [DashboardController::class, 'expenses_this_year_group_by_month'])->name('dashboard.expensesThisYearGroupByMonth');
+  Route::get('/dashboard/total-incomes-and-expenses-all-time', [DashboardController::class, 'total_incomes_and_expenses_all_time'])->name('dashboard.totalIncomesAndExpensesAllTime');
   // account
   Route::resource('account', AccountController::class);
   Route::get('/list-account', [AccountController::class, 'listAccount'])->name('account.list');

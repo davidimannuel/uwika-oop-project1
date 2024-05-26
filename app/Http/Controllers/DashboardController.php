@@ -180,4 +180,30 @@ class DashboardController extends Controller
           'expenses' => $expense_data
       ));
     }
+
+    public function total_incomes_and_expenses_all_time()
+    {
+      $total_income = Transaction::where('debit', '>'  , 0)
+          ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
+          ->where('accounts.user_id', auth()->user()->id)
+          ->sum('debit');
+          
+      $total_expense = Transaction::where('credit', '>'  , 0)
+          ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
+          ->where('accounts.user_id', auth()->user()->id)
+          ->sum('credit');
+
+      return response()->json([
+        'data' => [
+          [
+            'name' => 'Total Income',
+            'total' => $total_income
+          ],
+          [
+            'name' => 'Total Expense',
+            'total' => $total_expense
+          ]
+        ]
+      ]);
+    }
 }
