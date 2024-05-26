@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,9 +29,9 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 Route::middleware(['auth'])->group(function () {
   // Dashboard
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-  Route::get('/dashboard/incomes-this-year-group-by-month', [DashboardController::class, 'incomes_this_year_group_by_month'])->name('dashboard.incomesThisYearGroupByMonth');
-  Route::get('/dashboard/expenses-this-year-group-by-month', [DashboardController::class, 'expenses_this_year_group_by_month'])->name('dashboard.expensesThisYearGroupByMonth');
-  Route::get('/dashboard/total-incomes-and-expenses-all-time', [DashboardController::class, 'total_incomes_and_expenses_all_time'])->name('dashboard.totalIncomesAndExpensesAllTime');
+  Route::get('/dashboard/incomes-this-year-group-by-month', [DashboardController::class, 'incomes_this_year_group_by_month'])->name('dashboard.incomes_this_year_group_by_month');
+  Route::get('/dashboard/expenses-this-year-group-by-month', [DashboardController::class, 'expenses_this_year_group_by_month'])->name('dashboard.expenses_this_year_group_by_month');
+  Route::get('/dashboard/total-incomes-and-expenses-all-time', [DashboardController::class, 'total_incomes_and_expenses_all_time'])->name('dashboard.total_incomes_and_expenses_all_time');
   // account
   Route::resource('account', AccountController::class);
   Route::get('/list-account', [AccountController::class, 'listAccount'])->name('account.list');
@@ -41,4 +42,7 @@ Route::middleware(['auth'])->group(function () {
   Route::resource('transaction', TransactionController::class);
   Route::get('/transaction-total', [TransactionController::class, 'total'])->name('transaction.total');
   Route::get('/transaction-csv', [TransactionController::class, 'export_csv'])->name('transaction.exportCsv');
+  // user
+  Route::get('/user', [UserController::class, 'index'])->name('user.index');
+  Route::patch('/user/{user}/status', [UserController::class, 'patch_status'])->name('user.patch_status');
 });

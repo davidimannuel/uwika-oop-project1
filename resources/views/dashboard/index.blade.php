@@ -37,7 +37,7 @@
 <script>
 $(document).ready(function() {
   $.ajax({
-    url: "{{ route('dashboard.incomesThisYearGroupByMonth') }}",
+    url: "{{ route('dashboard.incomes_this_year_group_by_month') }}",
     type: 'GET',
     success: function(response) {
       var ctx = document.getElementById('total-incomes-this-year').getContext('2d');
@@ -71,7 +71,7 @@ $(document).ready(function() {
   });
   
   $.ajax({
-    url: "{{ route('dashboard.expensesThisYearGroupByMonth') }}",
+    url: "{{ route('dashboard.expenses_this_year_group_by_month') }}",
     type: 'GET',
     success: function(response) {
       var ctx = document.getElementById('total-expenses-this-year').getContext('2d');
@@ -105,7 +105,7 @@ $(document).ready(function() {
   });
   
   $.ajax({
-    url: "{{ route('dashboard.totalIncomesAndExpensesAllTime') }}",
+    url: "{{ route('dashboard.total_incomes_and_expenses_all_time') }}",
     type: 'GET',
     success: function(response) {
       var ctx = document.getElementById('total-incomes-and-expenses-all-time').getContext('2d');

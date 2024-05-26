@@ -16,8 +16,14 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
+        $name = $this->faker->randomElement([
+          'travel cost', 'home rent', 'food expenses', 'utility bills', 'entertainment expenses', 
+          'salary income', 'investment income', 'gift income', 'rental income', 'business expenses',
+          'education expenses', 'medical bills', 'car expenses', 'clothing expenses', 'phone bills'
+        ]);
+        // concat name with unique number to avoid duplicate name
         return [
-            'name' => $this->faker->randomElement(['travel cost', 'home rent', 'food expenses', 'utility bills', 'entertainment expenses', 'salary income', 'investment income', 'gift income', 'rental income', 'business expenses']),
+            'name' => $name . ' ' . $this->faker->unique()->numberBetween(1, 100),
         ];
     }
 }

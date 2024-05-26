@@ -19,7 +19,8 @@
             <div class="row">
               <div class="col-md-2 mb-2">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" id="modal-show-button">
+                <button type="button" class="btn btn-success" id="modal-show-button"
+                  @if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) disabled @endif>
                   Create
                 </button>
               </div>

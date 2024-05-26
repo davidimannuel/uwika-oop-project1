@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -26,6 +27,13 @@ class TransactionController extends Controller
       if (request()->ajax())
       {
         $model = Transaction::with('category')->where('account_id', $account_id);
+        // get by user
+        // $model = Transaction::with('category')
+        //   ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
+        //   ->where('accounts.user_id', auth()->user()->id);
+        // if ($account_id) {
+        //   $model->where('account_id', $account_id);
+        // }
         if ($start_date && $end_date) {
           // parse start_date and end_date to Asia/Jakarta timezone
           $start_date = $this->convert_timezone($start_date, 'Asia/Jakarta');
@@ -36,9 +44,7 @@ class TransactionController extends Controller
         }
         return DataTables::of($model)
         ->order(function ($query) {
-          if (!request()->has('updated_at')) {
-              $query->orderBy('updated_at', 'desc');
-          }
+          $query->orderBy('transaction_at', 'asc');
         })
         ->addIndexColumn()
         ->addColumn('transaction_type',function($data){
@@ -52,9 +58,10 @@ class TransactionController extends Controller
           return number_format($amount, 0, ',', '.');
         })
         ->addColumn('action',function($data){
+          $disable = (auth()->user()->status == User::STATUS_ACTIVE) ? '' : 'disabled';
           return '
-          <button type="button" class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
-          <button type="button" class="btn btn-danger table-delete-button" data-id="'.$data->id.'"><i class="bi bi-trash-fill"></i></button>';
+          <button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
+          <button type="button" '.$disable.' class="btn btn-danger table-delete-button" data-id="'.$data->id.'"><i class="bi bi-trash-fill"></i></button>';
         })
         ->editColumn('transaction_at',function($data){
           $carbonTime = Carbon::parse($data->transaction_at, 'Asia/Jakarta');
@@ -76,7 +83,7 @@ class TransactionController extends Controller
           return $html;
         })
         ->setRowClass('text-center')
-        ->rawColumns(['poster','action','transaction_type','category_style']) // render as raw html instead of string
+        ->rawColumns(['action','transaction_type','category_style']) // render as raw html instead of string
         ->toJson();
       }
       return view('transaction.index');

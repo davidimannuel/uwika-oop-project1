@@ -32,6 +32,9 @@
             <li class="nav-item">
               <a class="nav-link {{ Request::is('transaction*') ? 'active' : '' }}" href="{{ route('transaction.index') }}">Transaction</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link {{ Request::is('user*') ? 'active' : '' }}" href="{{ route('user.index') }}">User</a>
+            </li>
             @endauth
           </ul>
           <ul class="navbar-nav ms-auto">

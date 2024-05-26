@@ -45,7 +45,8 @@
             <div class="row">
               <div class="col-md-2 mb-2">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" id="modal-show-button">
+                <button type="button" class="btn btn-success" id="modal-show-button" 
+                  @if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) disabled @endif>
                   Create
                 </button>
               </div>
@@ -218,13 +219,13 @@
       ajax: '{{ route('transaction.index') }}'+'?account='+$('#account').val(),
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
-        { data: 'transaction_at', name: 'transaction_at'},
-        { data: 'remark', name: 'remark' },
+        { data: 'transaction_at', name: 'transaction_at', orderable: false},
+        { data: 'remark', name: 'remark', orderable: false},
         { data: 'category_style', searchable: false, orderable: false},
         { data: 'transaction_type', searchable: false, orderable: false},
         { data: 'amount', searchable: false, orderable: false},
-        { data: 'created_at', name: 'created_at'},
-        { data: 'updated_at', name: 'updated_at'},
+        { data: 'created_at', name: 'created_at', orderable: false},
+        { data: 'updated_at', name: 'updated_at', orderable: false},
         { data: 'action', searchable: false, orderable: false},
       ],
       drawCallback: function (settings) { // add event listener after render datatable "https://datatables.net/reference/option/drawCallback"

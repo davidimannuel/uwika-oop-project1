@@ -16,10 +16,15 @@ class TransactionFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'remark' => $this->faker->sentence,
-            'debit' => $this->faker->randomFloat(3, 0, 1000),
-            'credit' => $this->faker->randomFloat(3, 0, 1000),
+        $data = [
+          'remark' => $this->faker->sentence,
+          'transaction_at' => $this->faker->dateTimeThisYear,
         ];
+        if ($this->faker->boolean) {
+          $data['debit'] = $this->faker->randomFloat(3, 0, 1000);
+        } else {
+          $data['credit'] = $this->faker->randomFloat(3, 0, 1000);
+        }
+        return $data;
     }
 }

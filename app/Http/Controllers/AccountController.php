@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,9 +27,10 @@ class AccountController extends Controller
         })
         ->addIndexColumn()
         ->addColumn('action',function($data){
+          $disable = (auth()->user()->status == User::STATUS_ACTIVE) ? '' : 'disabled';
           return '
-          <button type="button" class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
-          <button type="button" class="btn btn-danger table-delete-button" data-id="'.$data->id.'"><i class="bi bi-trash-fill"></i></button>';
+          <button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
+          <button type="button" '.$disable.' class="btn btn-danger table-delete-button" data-id="'.$data->id.'"><i class="bi bi-trash-fill"></i></button>';
         })
         ->editColumn('created_at',function($data){
           $carbonTime = Carbon::parse($data->created_at, 'Asia/Jakarta');
@@ -39,7 +41,7 @@ class AccountController extends Controller
           return $carbonTime->format('Y-m-d H:i:s');
         })
         ->setRowClass('text-center')
-        ->rawColumns(['poster','action']) // render as raw html instead of string
+        ->rawColumns(['action']) // render as raw html instead of string
         ->toJson();
       }
       return view('account.index');
