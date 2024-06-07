@@ -24,7 +24,8 @@ class RegisterController extends Controller
       
       // encrypt password
       $validated_input['password'] = Hash::make($validated_input['password']);
-      
+      // set status
+      $validated_input['status'] = User::STATUS_INACTIVE;
       $user = User::create($validated_input);
 
       $request->session()->flash('register_success', 'Registration successful');

@@ -9,7 +9,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard.index');
+      if (auth()->user()->is_admin) {
+        return view('dashboard.admin.index');
+      }
+      return view('dashboard.index');
     }
 
     public function incomes_this_year_group_by_month()

@@ -25,12 +25,11 @@ class UserController extends Controller
           })
           ->addIndexColumn()
           ->addColumn('status_action',function($data){
-            $disable = (auth()->user()->is_admin) ? '' : 'disabled';
             $html = '';
             if ($data->status == User::STATUS_ACTIVE) {
-              $html .= '<button type="button" '.$disable.' class="btn btn-success table-status-button" data-id="'.$data->id.'">Active</button>';
+              $html .= '<button type="button" class="btn btn-success table-status-button" data-id="'.$data->id.'">Active</button>';
             } else {
-              $html .= '<button type="button" '.$disable.' class="btn btn-danger table-status-button" data-id="'.$data->id.'">Inactive</button>';
+              $html .= '<button type="button" class="btn btn-danger table-status-button" data-id="'.$data->id.'">Inactive</button>';
             }
             return $html;
           })
@@ -47,6 +46,20 @@ class UserController extends Controller
           ->toJson();
         }
         return view('user.index');
+    }
+
+    public function listUser()
+    {
+      if (request()->ajax()) {
+          $data = User::where('is_admin', false)
+          ->where('name','ILIKE',"%".request('search')."%")->get();
+          return response()->json([
+            'data' => $data,
+            'request' => request('search'),
+          ]);
+      }
+        
+      return;
     }
 
     /**

@@ -23,6 +23,7 @@
                     <tr>
                       <th class="text-center">No</th>
                       <th class="text-center">Name</th>
+                      <th class="text-center">Email</th>
                       <th class="text-center">Created At</th>
                       <th class="text-center">Updated At</th>
                       <th class="text-center">Status</th>
@@ -57,9 +58,10 @@
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
         { data: 'name', name: 'name' },
+        { data: 'email', name: 'email' },
         { data: 'created_at', name: 'created_at'},
         { data: 'updated_at', name: 'updated_at'},
-        { data: 'status_action', searchable: false, orderable: false},
+        { data: 'status_action', name: 'status', searchable: false, orderable: false},
       ],
       drawCallback: function (settings) { // add event listener after render datatable "https://datatables.net/reference/option/drawCallback"
         // using class property instead id, the button is more than one

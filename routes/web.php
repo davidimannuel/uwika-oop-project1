@@ -5,8 +5,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TransactionAdminController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,7 +44,15 @@ Route::middleware(['auth'])->group(function () {
   Route::resource('transaction', TransactionController::class);
   Route::get('/transaction-total', [TransactionController::class, 'total'])->name('transaction.total');
   Route::get('/transaction-csv', [TransactionController::class, 'export_csv'])->name('transaction.exportCsv');
-  // user
-  Route::get('/user', [UserController::class, 'index'])->name('user.index');
-  Route::patch('/user/{user}/status', [UserController::class, 'patch_status'])->name('user.patch_status');
+  // admin middleware
+  Route::middleware([EnsureAdmin::class])->group(function () {
+    // admin transaction
+    Route::get('/users-transaction', [TransactionAdminController::class, 'index'])->name('transaction.admin.index');
+    Route::get('/users-transaction-total', [TransactionAdminController::class, 'total'])->name('transaction.admin.total');
+    Route::get('/users-transaction-csv', [TransactionAdminController::class, 'export_csv'])->name('transaction.admin.exportCsv');
+    // user
+    Route::get('/user', [UserController::class, 'index'])->name('user.index');
+    Route::get('/list-user', [UserController::class, 'listUser'])->name('user.list');
+    Route::patch('/user/{user}/status', [UserController::class, 'patch_status'])->name('user.patch_status');
+  });
 });

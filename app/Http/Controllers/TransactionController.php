@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TimeHelper;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
@@ -27,17 +28,10 @@ class TransactionController extends Controller
       if (request()->ajax())
       {
         $model = Transaction::with('category')->where('account_id', $account_id);
-        // get by user
-        // $model = Transaction::with('category')
-        //   ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
-        //   ->where('accounts.user_id', auth()->user()->id);
-        // if ($account_id) {
-        //   $model->where('account_id', $account_id);
-        // }
         if ($start_date && $end_date) {
           // parse start_date and end_date to Asia/Jakarta timezone
-          $start_date = $this->convert_timezone($start_date, 'Asia/Jakarta');
-          $end_date = $this->convert_timezone($end_date, 'Asia/Jakarta');
+          $start_date = TimeHelper::convertTimezone($start_date, 'Asia/Jakarta');
+          $end_date = TimeHelper::convertTimezone($end_date, 'Asia/Jakarta');
           //set end date to end of the day
           $end_date->setTime(23, 59, 59);
           $model->where('transaction_at', '>=', $start_date)->where('transaction_at', '<=', $end_date);
@@ -89,12 +83,7 @@ class TransactionController extends Controller
       return view('transaction.index');
     }
 
-    
-    public function convert_timezone($date,$tz) {
-      $new_date = new DateTime($date, new DateTimeZone($tz));
-      return $new_date;
-    }
-    
+
 
     public function total()
     {
@@ -106,8 +95,8 @@ class TransactionController extends Controller
       if ($start_date && $end_date) {
         // parse start_date and end_date to Asia/Jakarta timezone
         // parse start_date and end_date to Asia/Jakarta timezone
-        $start_date = $this->convert_timezone($start_date, 'Asia/Jakarta');
-        $end_date = $this->convert_timezone($end_date, 'Asia/Jakarta');
+        $start_date = TimeHelper::convertTimezone($start_date, 'Asia/Jakarta');
+        $end_date = TimeHelper::convertTimezone($end_date, 'Asia/Jakarta');
         //set end date to end of the day
         $end_date->setTime(23, 59, 59);
         $total_income->where('transaction_at', '>=', $start_date)->where('transaction_at', '<=', $end_date);
