@@ -235,7 +235,7 @@
         }
       }
     });
-
+    loadTotal();
     // datatable
     var datatableList = $('#table-list').DataTable({
       processing: true,
