@@ -91,6 +91,12 @@ class TransactionController extends Controller
       if (!$account) {
         $account = Account::where('user_id', auth()->user()->id)->first();
       }
+      // if still not found return error view
+      if (!$account) {
+        return view('error.index', [
+          'message' => 'Please create account first',
+        ]);
+      }
       return view('transaction.index',[
         'account' => $account,
       ]);
