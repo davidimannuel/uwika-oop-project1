@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\TimeHelper;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\TransactionDebtRelation;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -53,9 +55,12 @@ class TransactionController extends Controller
         })
         ->addColumn('action',function($data){
           $disable = (auth()->user()->status == User::STATUS_ACTIVE) ? '' : 'disabled';
-          return '
-          <button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
+          $html = '<button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></button>
           <button type="button" '.$disable.' class="btn btn-danger table-delete-button" data-id="'.$data->id.'"><i class="bi bi-trash-fill"></i></button>';
+          if ($data->is_debt) {
+            $html = $html . '<a href="'.route("debt.index")."?debt_id=$data->id".'" class="btn btn-warning table-debt-button" ><i class="bi bi-journal-text"></i></a>';
+          } 
+          return $html;
         })
         ->editColumn('transaction_at',function($data){
           $carbonTime = Carbon::parse($data->transaction_at, 'Asia/Jakarta');
@@ -80,7 +85,15 @@ class TransactionController extends Controller
         ->rawColumns(['action','transaction_type','category_style']) // render as raw html instead of string
         ->toJson();
       }
-      return view('transaction.index');
+      // get account
+      $account = Account::where('user_id', auth()->user()->id)->where('id',request('account_id'))->first();
+      // if not found get first account
+      if (!$account) {
+        $account = Account::where('user_id', auth()->user()->id)->first();
+      }
+      return view('transaction.index',[
+        'account' => $account,
+      ]);
     }
 
 
@@ -147,6 +160,7 @@ class TransactionController extends Controller
         "account_id" => $request->input('account_id'),
         "category_id" => $request->input('category_id'),
         "transaction_at" => $request->input('transaction_at'),
+        "is_debt" => $request->has('is_debt'),
       ];
 
       if ($request->input('transaction_type') == 'income') {
@@ -155,7 +169,16 @@ class TransactionController extends Controller
         $data['credit'] = $request->input('amount');
       }
 
-      Transaction::create($data);
+      DB::transaction(function () use ($request,$data) {
+        $transaction = Transaction::create($data);
+        if ($request->has('debt_id')) {
+          $debt_data = [
+            'transaction_id' => $request->input('debt_id'),
+            'relation_id' => $transaction->id,
+          ];
+          TransactionDebtRelation::create($debt_data);
+        }
+      });
 
       return response()->json(['success'=>'success insert']);
     }

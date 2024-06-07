@@ -10,57 +10,32 @@
 @endpush
 
 @section('content')
-<div class="row mb-2">
-  <div class="col-md-2">
-    <select class="form-control" name="account" id="account">
-    </select>
-  </div>
-  <div class="col-md-1">
-    <p class="text-center">date : </p>
-  </div>
-  <div class="col-md-2">
-    <input type="date" class="form-control" name="start-date" id="start-date">
-  </div>
-  <div class="col-md-1">
-    <p class="text-center">to</p>
-  </div>
-  <div class="col-md-2">
-    <input type="date" class="form-control" name="end-date" id="end-date">
-  </div>
-  <div class="col-md-2">
-    <button type="button" class="btn btn-primary" id="filter-button">filter</button>
-  </div>
-  <div class="col-md-2">
-    <button type="button" class="btn btn-success" id="export-csv-button">Export CSV</button>
-  </div>
-</div>
 <div class="row">
   <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">transaction list</h3>
+            <h3 class="card-title">debt transaction list</h3>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
             <div class="row">
-              <div class="col-md-2 mb-2">
+              <div class="col-md-1 mb-2">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-success" id="modal-show-button" 
                   @if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) disabled @endif>
                   Create
                 </button>
               </div>
-              <div class="col-md-3">
-                <p class="text-end">Income : </p>
-                <p id="total_income" class="text-end fs-5">0</p>
+              <div class="col-md-1 mb-2">
+                <a href="{{ route('transaction.index') .'?account_id='.$transaction->account_id }}" class="btn btn-primary">Back</a>
               </div>
-              <div class="col-md-3">
-                <p class="text-end">Expense : </p>
-                <p id="total_expense" class="text-end fs-5">0</p>
+              <div class="col-md-5">
+                <p class="text-end">Debt : </p>
+                <p id="total_debt" class="text-end fs-5">0</p>
               </div>
-              <div class="col-md-3">
-                <p class="text-end">Balance : </p>
-                <p id="balance" class="text-end fs-5">0</p>
+              <div class="col-md-5">
+                <p class="text-end">Paid Debt : </p>
+                <p id="paid_debt" class="text-end fs-5">0</p>
               </div>
             </div>
             <div class="row">
@@ -135,16 +110,6 @@
                 <input type="number" class="form-control" name="amount" id="amount">
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="is-debt">
-                  <label class="form-check-label" for="is-debt">
-                    Is Debt ?
-                  </label>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -163,49 +128,6 @@
 <script src="{{ asset('select2-4.0.13/dist/js/select2.full.min.js') }}"></script>
 <script>
   $(document).ready(function() {
-    $('#account').select2({
-      placeholder: "Select account",
-      theme: 'bootstrap-5',
-      minimumInputLength: 0,
-      ajax: {
-        delay: 250,
-        url: '{{ route("account.list") }}',
-        dataType: 'json',
-        data : function(params){
-          var query = {
-            search: params.term,
-          }
-
-          return query
-        },
-        processResults: function (response) {
-          return {
-            results: $.map(response.data,function(data){
-              return {
-                id: data.id,
-                text: data.name,
-                selected: false
-              }
-            })
-          };
-        }
-      }
-    });
-
-    var accountOpt = new Option('{{ $account->name }}', {{ $account->id }}, true, true); // create the option and append to Select2
-    $('#account').append(accountOpt);// https://select2.org/data-sources/ajax#default-pre-selected-values
-
-    //add event listener for elemen <select>
-    $('#account').on('change', function() {
-        // get value
-        var selectedType = $(this).val();
-        // configure URL Ajax and adding query parameter "type"
-        var ajaxUrl = '{{ route('transaction.index') }}' +'?account_id='+$('#account').val();
-
-        datatableList.ajax.url(ajaxUrl).load();
-        loadTotal();
-    });
-    
     $('#category').select2({
       placeholder: "Select category",
       theme: 'bootstrap-5',
@@ -235,12 +157,14 @@
         }
       }
     });
-
+    var debt_id = {{ $transaction->id }};
+    var account_id = {{ $transaction->account_id }};
+    loadTotal();
     // datatable
     var datatableList = $('#table-list').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('transaction.index') }}'+'?account_id='+'{{ $account->id }}',
+      ajax: '{{ route('debt.index') }}'+'?debt_id='+debt_id,
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
         { data: 'transaction_at', name: 'transaction_at', orderable: false},
@@ -349,14 +273,6 @@
                   // Set the selected option in Select2 https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
                   var categoryOpt = new Option(response.data.category.name, response.data.category.id, true, true); // create the option and append to Select2
                   $('#category').append(categoryOpt).trigger('change');// https://select2.org/data-sources/ajax#default-pre-selected-values
-
-                  if (response.data.is_debt) {
-                    $('#is-debt').prop('checked', true);
-                  } else {
-                    $('#is-debt').prop('checked', false);
-                  }
-                  // disable is debt
-                  $('#is-debt').prop('disabled', true);
                   $("#modal-save-button").attr('data-edit-id',response.data.id);
               },
               error: function(xhr, status, error) {
@@ -376,7 +292,7 @@
     // function for load total income, expense, and balance
     function loadTotal() {
       $.ajax({
-        url: '{{ route('transaction.total') }}'+'?account_id='+$('#account').val()+ '&start_date='+$('#start-date').val()+'&end_date='+$('#end-date').val(),
+        url: '{{ route('debt.total') }}'+'?debt_id='+debt_id,
         type: 'GET',
         success: function(response) {
             // Handle success response
@@ -388,9 +304,8 @@
                   icon: "error",
               });
             } else {
-              $('#total_income').html(response.data.total_income_formated);
-              $('#total_expense').html(response.data.total_expense_formated);
-              $('#balance').html(response.data.balance_formated);
+              $('#total_debt').html(response.data.total_debt_formated);
+              $('#paid_debt').html(response.data.paid_debt_formated);
             }
         },
         error: function(xhr, status, error) {
@@ -404,6 +319,17 @@
         }
       });
     }
+
+    //add event listener for elemen <select>
+    $('#account').on('change', function() {
+        // get value
+        var selectedType = $(this).val();
+        // configure URL Ajax and adding query parameter "type"
+        var ajaxUrl = '{{ route('transaction.index') }}' +'?account_id='+$('#account').val();
+
+        datatableList.ajax.url(ajaxUrl).load();
+        loadTotal();
+    });
 
     // add event listener for filter button
     $('#filter-button').click(function(event){
@@ -424,44 +350,8 @@
       loadTotal();
     })
 
-    // add event listener for export csv button
-    $('#export-csv-button').click(function(event){
-      // prevent default form submit
-      event.preventDefault();
-      // if not select account yet give warning
-      if ($('#account').val() == null) {
-        Swal.fire({
-          title: "Oops...",
-          text: "Please select account first!",
-          icon: "warning",
-        });
-        return;
-      }
-      // validate start date and end date
-      if ($('#start-date').val() == '' || $('#end-date').val() == '') {
-        Swal.fire({
-          title: "Oops...",
-          text: "Please select start date and end date!",
-          icon: "warning",
-        });
-        return;
-      }
-      // configure URL Ajax and adding query parameter "type"
-      var ajaxUrl = '{{ route('transaction.exportCsv') }}' +'?account_id='+$('#account').val()+'&start_date='+$('#start-date').val()+'&end_date='+$('#end-date').val();
-      window.location.href = ajaxUrl;
-    })
-
     // modal
     $("#modal-show-button").click(function(){
-      // if not select account yet give warning
-      if ($('#account').val() == null) {
-        Swal.fire({
-          title: "Oops...",
-          text: "Please select account first!",
-          icon: "warning",
-        });
-        return;
-      }
       $("#modal-title").html('create');
       $("#modal-form").modal('show');
       $('#remark').val('');
@@ -470,8 +360,6 @@
       $('#transaction-type').val('');
       $('#amount').val('');
       $("#modal-save-button").attr('data-edit-id','')
-      // enable is debt
-      $('#is-debt').prop('disabled', false);
     })
     
     $("#modal-close-button").click(function(){
@@ -489,14 +377,12 @@
   
       var formData = new FormData();
       formData.append('remark', $('#remark').val());
-      formData.append('account_id', $('#account').val());
+      formData.append('account_id', account_id);
       formData.append('category_id', $('#category').val());
       formData.append('transaction_at', $('#transaction-at').val());
       formData.append('transaction_type', $('#transaction-type').val());
       formData.append('amount', $('#amount').val());
-      if ($('#is-debt').is(':checked')) {
-        formData.append('is_debt', true);
-      }
+      formData.append('debt_id', debt_id);
   
       var editId = parseInt($("#modal-save-button").attr('data-edit-id'));
       var url = '{{ route('transaction.store') }}';

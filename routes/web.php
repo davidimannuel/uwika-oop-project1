@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DebtController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TransactionAdminController;
@@ -45,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
   Route::resource('transaction', TransactionController::class);
   Route::get('/transaction-total', [TransactionController::class, 'total'])->name('transaction.total');
   Route::get('/transaction-csv', [TransactionController::class, 'export_csv'])->name('transaction.exportCsv');
+  // debt
+  Route::get('/debt', [DebtController::class, 'index'])->name('debt.index');
+  Route::get('/debt-total', [DebtController::class, 'total'])->name('debt.total');
   // admin middleware
   Route::middleware([EnsureAdmin::class])->group(function () {
     // admin transaction

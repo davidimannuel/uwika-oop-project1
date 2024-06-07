@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
@@ -18,6 +19,7 @@ class Transaction extends Model
       'debit',
       'credit',
       'transaction_at',
+      'is_debt',
     ];
 
     public function account(): BelongsTo
@@ -33,5 +35,10 @@ class Transaction extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function debt_relations(): HasMany
+    {
+        return $this->hasMany(TransactionDebtRelation::class);
     }
 }
