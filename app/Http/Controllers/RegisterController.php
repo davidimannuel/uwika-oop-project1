@@ -19,7 +19,7 @@ class RegisterController extends Controller
           'name' => ['required'],
           'email' => ['required', 'email:dns', 'unique:users'],
           'password' => ['required', 'min:5'],
-          'password_confirmation' => ['required', 'min:5', 'same:password'],
+          'password_confirmation' => ['required', 'same:password'],
       ]);
       
       // encrypt password

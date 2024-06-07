@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TransactionAdminController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
@@ -47,12 +48,14 @@ Route::middleware(['auth'])->group(function () {
   // admin middleware
   Route::middleware([EnsureAdmin::class])->group(function () {
     // admin transaction
-    Route::get('/users-transaction', [TransactionAdminController::class, 'index'])->name('transaction.admin.index');
-    Route::get('/users-transaction-total', [TransactionAdminController::class, 'total'])->name('transaction.admin.total');
-    Route::get('/users-transaction-csv', [TransactionAdminController::class, 'export_csv'])->name('transaction.admin.exportCsv');
+    Route::get('/admin/users-transaction', [TransactionAdminController::class, 'index'])->name('transaction.admin.index');
+    Route::get('/admin/users-transaction-total', [TransactionAdminController::class, 'total'])->name('transaction.admin.total');
+    Route::get('/admin/users-transaction-csv', [TransactionAdminController::class, 'export_csv'])->name('transaction.admin.exportCsv');
     // user
-    Route::get('/user', [UserController::class, 'index'])->name('user.index');
-    Route::get('/list-user', [UserController::class, 'listUser'])->name('user.list');
-    Route::patch('/user/{user}/status', [UserController::class, 'patch_status'])->name('user.patch_status');
+    Route::get('/admin/user', [UserAdminController::class, 'index'])->name('user.admin.index');
+    Route::get('/admin/list-user', [UserAdminController::class, 'listUser'])->name('user.admin.list');
+    Route::patch('/admin/user/{user}/status', [UserAdminController::class, 'patch_status'])->name('user.admin.patch_status');
+    Route::get('/admin/user/{user}/edit', [UserAdminController::class, 'edit'])->name('user.admin.edit');
+    Route::put('/admin/user/{user}', [UserAdminController::class, 'update'])->name('user.admin.update');
   });
 });

@@ -27,6 +27,7 @@
                       <th class="text-center">Created At</th>
                       <th class="text-center">Updated At</th>
                       <th class="text-center">Status</th>
+                      <th class="text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -54,7 +55,7 @@
     var datatableList = $('#table-list').DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('user.index') }}',
+      ajax: '{{ route('user.admin.index') }}',
       columns: [
         { data: 'DT_RowIndex',searchable: false, orderable: false},
         { data: 'name', name: 'name' },
@@ -62,6 +63,7 @@
         { data: 'created_at', name: 'created_at'},
         { data: 'updated_at', name: 'updated_at'},
         { data: 'status_action', name: 'status', searchable: false, orderable: false},
+        { data: 'action', name: 'action', searchable: false, orderable: false},
       ],
       drawCallback: function (settings) { // add event listener after render datatable "https://datatables.net/reference/option/drawCallback"
         // using class property instead id, the button is more than one
@@ -84,7 +86,7 @@
               
 
               var id = $(this).data('id');
-              var ajaxUrl = '{{ route("user.patch_status", ":id") }}';
+              var ajaxUrl = '{{ route("user.admin.patch_status", ":id") }}';
               ajaxUrl = ajaxUrl.replace(':id', id);
               $.ajax({
                   url: ajaxUrl,

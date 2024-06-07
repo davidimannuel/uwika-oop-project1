@@ -107,7 +107,7 @@
       minimumInputLength: 0,
       ajax: {
         delay: 250,
-        url: '{{ route("user.list") }}',
+        url: '{{ route("user.admin.list") }}',
         dataType: 'json',
         data : function(params){
           var query = {

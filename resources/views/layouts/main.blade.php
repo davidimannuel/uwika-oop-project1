@@ -28,10 +28,10 @@
             @auth
               @if (auth()->user()->is_admin) 
                 <li class="nav-item">
-                  <a class="nav-link {{ Request::is('user*') ? 'active' : '' }}" href="{{ route('user.index') }}">User</a>
+                  <a class="nav-link {{ Request::is('admin/user') ? 'active' : '' }}" href="{{ route('user.admin.index') }}">User</a>
                 </li> 
                 <li class="nav-item">
-                  <a class="nav-link {{ Request::is('user*') ? 'active' : '' }}" href="{{ route('transaction.admin.index') }}">User Transaction</a>
+                  <a class="nav-link {{ Request::is('admin/users-transaction') ? 'active' : '' }}" href="{{ route('transaction.admin.index') }}">User Transaction</a>
                 </li> 
               @else
                 <li class="nav-item">

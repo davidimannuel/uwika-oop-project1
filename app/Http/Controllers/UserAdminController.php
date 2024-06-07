@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 
-class UserController extends Controller
+class UserAdminController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,11 +42,14 @@ class UserController extends Controller
             $carbonTime = Carbon::parse($data->updated_at, 'Asia/Jakarta');
             return $carbonTime->format('Y-m-d H:i:s');
           })
+          ->addColumn('action',function($data){
+            return '<a href="'.route('user.admin.edit',$data->id).'" class="btn btn-primary" data-id="'.$data->id.'"><i class="bi bi-pencil-square"></i></i></a>';
+          })
           ->setRowClass('text-center')
-          ->rawColumns(['status_action']) // render as raw html instead of string
+          ->rawColumns(['status_action','action']) // render as raw html instead of string
           ->toJson();
         }
-        return view('user.index');
+        return view('user.admin.index');
     }
 
     public function listUser()
@@ -91,7 +95,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+      $user = User::where('id', $id)
+          ->where('is_admin', false)
+          ->first();
+        
+      return view('user.admin.edit', compact('user'));
     }
 
     /**
@@ -99,7 +107,30 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+      $user = User::where('id', $id)
+      ->where('is_admin', false)
+      ->first();
+
+      $validate = [
+        'name' => ['required'],
+        'email' => ['required', 'email:dns', 'unique:users,email,'.$user->id],
+      ];
+      // if password is not empty, validate password adn password confirmation
+      if ($request->password) {
+        $validate['password'] = ['required', 'min:5'];
+        $validate['password_confirmation'] = ['required', 'same:password'];
+      }
+      $validated_input = $request->validate($validate);
+      $user->name = $validated_input['name'];
+      $user->email = $validated_input['email'];
+      if ($request->password) {
+        $user->password = Hash::make($validated_input['password']);
+      }
+      $user->save();
+      
+      $request->session()->flash('update_success', 'Update successful');
+
+      return redirect()->route('user.admin.index');
     }
     
     /**
