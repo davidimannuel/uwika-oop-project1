@@ -40,8 +40,7 @@ class DebtController extends Controller
         })
         ->addColumn('action',function($data){
           $disable = (auth()->user()->status == User::STATUS_ACTIVE) ? '' : 'disabled';
-          $html = '<button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->relation_id.'"><i class="bi bi-pencil-square"></i></i></button>
-          <button type="button" '.$disable.' class="btn btn-danger table-delete-button" data-id="'.$data->relation_id.'"><i class="bi bi-trash-fill"></i></button>';
+          $html = '<button type="button" '.$disable.' class="btn btn-primary table-edit-button" data-id="'.$data->relation_id.'"><i class="bi bi-pencil-square"></i></i></button>';
           
           return $html;
         })

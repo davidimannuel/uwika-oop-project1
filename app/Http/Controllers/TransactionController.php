@@ -274,6 +274,41 @@ class TransactionController extends Controller
      */
     public function destroy(string $id)
     {
-      Transaction::destroy($id);
+      $transaction = Transaction::find($id);
+      // if not found return
+      if (!$transaction) {
+        return response()->json(['errors'=>['Transaction not found']]);
+      }
+      // if transaction is debt, delete the relation
+      if ($transaction->is_debt) {
+        TransactionDebtRelation::where('transaction_id', $transaction->id)->delete();
+        Transaction::destroy($transaction->id);
+      } else {
+        // if transaction is in relation, return error
+        $relation = TransactionDebtRelation::where('relation_id', $transaction->id)->first();
+        if ($relation) {
+          return response()->json(['errors'=>['Transaction is in debt relation, delete parent debt transaction first']]);
+        }
+        Transaction::destroy($transaction->id);
+      }
+      // db transaction 
+      // DB::transaction(function () use ($transaction) {
+      //   return response()->json(['errors'=>['s is in debt']]);
+      //   // if transaction is debt, delete the relation
+      //   if ($transaction->is_debt) {
+      //     TransactionDebtRelation::where('transaction_id', $transaction->id)->delete();
+      //     Transaction::destroy($transaction->id);
+      //   } else {
+      //     return response()->json(['errors'=>['s is in debt']]);
+      //     // if transaction is in relation, return error
+      //     $relation = TransactionDebtRelation::where('relation_id', $transaction->id)->first();
+      //     if ($relation) {
+      //       return response()->json(['errors'=>['Transaction is in debt relation']]);
+      //     } else {
+      //       return response()->json(['errors'=>['Transaction is in debt']]);
+      //     }
+      //     return response()->json(['errors'=>['s is in debt']]);
+      //   }
+      // });
     }
 }
