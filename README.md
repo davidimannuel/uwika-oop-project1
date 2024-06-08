@@ -16,10 +16,12 @@
 - Select2
 
 # Features
-## Admin
+## Admin 
   - login
   - activated / non activate user
   - edit user (name, email, password)
+  - read user transaction
+  - export csv user transactions
 ## User
   - register & login
   - category management

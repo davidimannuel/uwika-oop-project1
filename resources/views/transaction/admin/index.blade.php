@@ -43,13 +43,6 @@
         <!-- /.card-header -->
         <div class="card-body">
             <div class="row">
-              <div class="col-md-2 mb-2">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" id="modal-show-button" 
-                  @if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) disabled @endif>
-                  Create
-                </button>
-              </div>
               <div class="col-md-3">
                 <p class="text-end">Income : </p>
                 <p id="total_income" class="text-end fs-5">0</p>
