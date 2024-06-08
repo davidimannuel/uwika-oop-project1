@@ -465,13 +465,11 @@
       $("#modal-title").html('create');
       $("#modal-form").modal('show');
       $('#remark').val('');
-      $('#category').val('');
       $('#transaction-at').val('');
       $('#transaction-type').val('');
       $('#amount').val('');
       $("#modal-save-button").attr('data-edit-id','')
-      // enable is debt
-      $('#is-debt').prop('disabled', false);
+      $('#is-debt').prop('checked', false);
     })
     
     $("#modal-close-button").click(function(){

@@ -20,20 +20,20 @@
         <div class="card-body">
             <div class="row">
               <div class="col-md-1 mb-2">
+                <a href="{{ route('transaction.index') .'?account_id='.$transaction->account_id }}" class="btn btn-primary">Back</a>
+              </div>
+              <div class="col-md-2 mb-2">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-success" id="modal-show-button" 
                   @if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) disabled @endif>
-                  Create
+                  Pay Debt
                 </button>
               </div>
-              <div class="col-md-1 mb-2">
-                <a href="{{ route('transaction.index') .'?account_id='.$transaction->account_id }}" class="btn btn-primary">Back</a>
-              </div>
-              <div class="col-md-5">
+              <div class="col-md-4">
                 <p class="text-end">Debt : </p>
                 <p id="total_debt" class="text-end fs-5">0</p>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-4">
                 <p class="text-end">Paid Debt : </p>
                 <p id="paid_debt" class="text-end fs-5">0</p>
               </div>
@@ -100,9 +100,12 @@
             <div class="row">
               <div class="col-md-6">
                 <label for="transaction-type">Transaction type</label>
-                <select class="form-control" name="transaction-type" id="transaction-type">
-                  <option value="income">Income</option>
-                  <option value="expense">Expense</option>
+                <select class="form-control" name="transaction-type" id="transaction-type" disabled>
+                  @if ($transaction->credit > 0)
+                    <option value="income" selected>Income</option>
+                  @else 
+                    <option value="expense" selected>Expense</option>   
+                  @endif
                 </select>
               </div>
               <div class="col-md-6">
@@ -260,12 +263,6 @@
                   $('#transaction-at').val(response.data.transaction_at_tz);
 
                   if (response.data.debit > 0) {
-                    $('#transaction-type').val('income');
-                  } else {
-                    $('#transaction-type').val('expense');
-                  }
-
-                  if (response.data.debit > 0) {
                     $('#amount').val(response.data.debit);
                   } else {
                     $('#amount').val(response.data.credit);
@@ -355,9 +352,7 @@
       $("#modal-title").html('create');
       $("#modal-form").modal('show');
       $('#remark').val('');
-      $('#category').val('');
       $('#transaction-at').val('');
-      $('#transaction-type').val('');
       $('#amount').val('');
       $("#modal-save-button").attr('data-edit-id','')
     })
