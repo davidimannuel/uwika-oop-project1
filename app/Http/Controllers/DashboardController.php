@@ -86,7 +86,7 @@ class DashboardController extends Controller
           ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
           ->where('accounts.user_id', auth()->user()->id)
           ->groupBy('month')
-          ->orderBy("date_part('month',transaction_at)", 'asc')
+          ->orderBy('month', 'asc')
           ->get();
       
       // fill value from income to income_data
@@ -172,7 +172,7 @@ class DashboardController extends Controller
           ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
           ->where('accounts.user_id', auth()->user()->id)
           ->groupBy('month')
-          ->orderBy("date_part('month',transaction_at)", 'asc')
+          ->orderBy('month', 'asc')
           ->get();
       
       // fill value from income to income_data
