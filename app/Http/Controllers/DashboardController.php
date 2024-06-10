@@ -89,9 +89,9 @@ class DashboardController extends Controller
           ->orderBy('month', 'asc')
           ->get();
       
-      // fill value from income to income_data
-      foreach ($income as $index => $item) {
-        $income_data[$index]['total'] = $item->total;
+      // fill value from income to income_data, from index 0
+      foreach ($income as $item) {
+        $income_data[$item->month - 1]['total'] = $item->total;
       }
    
 
@@ -177,7 +177,7 @@ class DashboardController extends Controller
       
       // fill value from income to income_data
       foreach ($expense as $item) {
-        $expense_data[$item->month]['total'] = $item->total;
+        $income_data[$item->month - 1]['total'] = $item->total;
       }
 
       return response()->json(array(
