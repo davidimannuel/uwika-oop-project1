@@ -86,11 +86,12 @@ class DashboardController extends Controller
           ->join('accounts', 'transactions.account_id', '=', 'accounts.id')
           ->where('accounts.user_id', auth()->user()->id)
           ->groupBy('month')
+          ->orderBy('transaction_at', 'asc')
           ->get();
       
       // fill value from income to income_data
-      foreach ($income as $item) {
-        $income_data[$item->month]['total'] = $item->total;
+      foreach ($income as $index => $item) {
+        $income_data[$index]['total'] = $item->total;
       }
    
 
