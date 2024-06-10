@@ -174,10 +174,10 @@ class DashboardController extends Controller
           ->groupBy('month')
           ->orderBy('month', 'asc')
           ->get();
-      
+
       // fill value from income to income_data
       foreach ($expense as $item) {
-        $income_data[$item->month - 1]['total'] = $item->total;
+        $expense_data[$item->month - 1]['total'] = $item->total;
       }
 
       return response()->json(array(
