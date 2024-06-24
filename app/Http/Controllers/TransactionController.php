@@ -156,6 +156,7 @@ class TransactionController extends Controller
         "category_id" => 'required',
         "transaction_type" => 'required',
         "transaction_at" => 'required',
+        "amount" => 'required',
       ], []);
       if ($validate->fails()) {
           return response()->json(['errors'=>$validate->errors()->all()]);
@@ -223,6 +224,7 @@ class TransactionController extends Controller
         "category_id" => 'required',
         "transaction_type" => 'required',
         "transaction_at" => 'required',
+        "amount" => 'required',
       ], []);
       if ($validate->fails()) {
           return response()->json(['errors'=>$validate->errors()->all()]);
